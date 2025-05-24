@@ -8,12 +8,26 @@ services:
       # Aspire
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://habitor.aspire-dashboard:18889
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - ASPNETCORE_ENVIRONMENT=Development 
     build:
       context: .
       dockerfile: src/Habitor.Api/Dockerfile
+    depends_on:
+      - habitor.postgres
     ports:
       - 5000:8080
       - 5001:8081
+
+  habitor.postgres:
+    image: postgres:17.2
+    environment:
+      POSTGRES_DB: devhabit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5433:5432
+    volumes:
+      - ./.container/postgres-data:/var/lib/postgresql/data
 
   habitor.seq:
     image: datalust/seq:2024.3
