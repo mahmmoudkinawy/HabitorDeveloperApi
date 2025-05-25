@@ -1,4 +1,5 @@
-﻿using Habitor.Api.Contracts.Habits;
+﻿using Habitor.Api.Contracts.Habits.Requests;
+using Habitor.Api.Contracts.Habits.Responses;
 using Habitor.Api.DbContexts;
 using Habitor.Api.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ public sealed class HabitsController(HabitorDbContext dbContext) : ControllerBas
 	}
 
 	[HttpGet("{id}")]
-	public async Task<IActionResult> GetHabitByID([FromRoute] string id)
+	public async Task<IActionResult> GetHabitById([FromRoute] string id)
 	{
 		var habit = await _dbContext.Habits.Where(h => h.Id == id).Select(h => h.ToHabitResponse()).FirstOrDefaultAsync();
 
@@ -33,5 +34,52 @@ public sealed class HabitsController(HabitorDbContext dbContext) : ControllerBas
 		}
 
 		return Ok(habit);
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> CreateHabit([FromBody] CreateHabitRequest request)
+	{
+		var habit = request.ToHabit();
+
+		_dbContext.Habits.Add(habit);
+		await _dbContext.SaveChangesAsync();
+
+		var habitResponse = habit.ToHabitResponse();
+
+		return CreatedAtAction(nameof(GetHabitById), new { id = habitResponse.Id }, habitResponse);
+	}
+
+	[HttpPut("{id}")]
+	public async Task<IActionResult> UpdateHabit([FromRoute] string id, [FromBody] UpdateHabitRequest request)
+	{
+		var habit = await _dbContext.Habits.AsNoTracking().FirstOrDefaultAsync(h => h.Id == id);
+
+		if (habit is null)
+		{
+			return NotFound();
+		}
+
+		var habitToUpdate = request.ToHabit(habit);
+
+		_dbContext.Entry(habitToUpdate).State = EntityState.Modified;
+		await _dbContext.SaveChangesAsync();
+
+		return NoContent();
+	}
+
+	[HttpDelete("{id}")]
+	public async Task<IActionResult> DeleteHabit([FromRoute] string id)
+	{
+		var habit = await _dbContext.Habits.AsNoTracking().FirstOrDefaultAsync(h => h.Id == id);
+
+		if (habit is null)
+		{
+			return NotFound();
+		}
+
+		_dbContext.Habits.Remove(habit);
+		await _dbContext.SaveChangesAsync();
+
+		return NoContent();
 	}
 }

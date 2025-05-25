@@ -1,4 +1,4 @@
-﻿namespace Habitor.Api.Contracts.Habits;
+﻿namespace Habitor.Api.Contracts.Habits.Responses;
 
 public class HabitCollectionResponse
 {
