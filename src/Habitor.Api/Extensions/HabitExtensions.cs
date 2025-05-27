@@ -26,7 +26,7 @@ public static class HabitExtensions
 		};
 	}
 
-	public static HabitEntity ToHabit(this UpdateHabitRequest request, HabitEntity habit)
+	public static HabitEntity ToHabitEntity(this UpdateHabitRequest request, HabitEntity habit)
 	{
 		ArgumentNullException.ThrowIfNull(request);
 		ArgumentNullException.ThrowIfNull(habit);

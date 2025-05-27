@@ -2,6 +2,7 @@
 using Habitor.Api.Contracts.Habits.Responses;
 using Habitor.Api.DbContexts;
 using Habitor.Api.Extensions;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,9 +60,37 @@ public sealed class HabitsController(HabitorDbContext dbContext) : ControllerBas
 			return NotFound();
 		}
 
-		var habitToUpdate = request.ToHabit(habit);
+		var habitToUpdate = request.ToHabitEntity(habit);
 
 		_dbContext.Entry(habitToUpdate).State = EntityState.Modified;
+		await _dbContext.SaveChangesAsync();
+
+		return NoContent();
+	}
+
+	[HttpPatch("{id}")]
+	public async Task<IActionResult> PatchHabit([FromRoute] string id, JsonPatchDocument<HabitResponse> jsonPatchDocument)
+	{
+		var habit = await _dbContext.Habits.FirstOrDefaultAsync(h => h.Id == id);
+
+		if (habit is null)
+		{
+			return NotFound();
+		}
+
+		var habitResponse = habit.ToHabitResponse();
+
+		jsonPatchDocument.ApplyTo(habitResponse, ModelState);
+
+		if (!TryValidateModel(habitResponse))
+		{
+			return ValidationProblem(ModelState);
+		}
+
+		habit.Name = habitResponse.Name;
+		habit.Description = habitResponse.Description;
+		habit.UpdatedAtUtc = DateTime.UtcNow;
+
 		await _dbContext.SaveChangesAsync();
 
 		return NoContent();

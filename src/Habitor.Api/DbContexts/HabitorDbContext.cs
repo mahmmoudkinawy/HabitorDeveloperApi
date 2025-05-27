@@ -6,6 +6,7 @@ namespace Habitor.Api.DbContexts;
 public sealed class HabitorDbContext(DbContextOptions<HabitorDbContext> options) : DbContext(options)
 {
 	public DbSet<HabitEntity> Habits { get; set; }
+	public DbSet<TagEntity> Tags { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
