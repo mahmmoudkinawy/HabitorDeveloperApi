@@ -7,6 +7,7 @@ public sealed class HabitorDbContext(DbContextOptions<HabitorDbContext> options)
 {
 	public DbSet<HabitEntity> Habits { get; set; }
 	public DbSet<TagEntity> Tags { get; set; }
+	public DbSet<HabitTagEntity> HabitTags { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

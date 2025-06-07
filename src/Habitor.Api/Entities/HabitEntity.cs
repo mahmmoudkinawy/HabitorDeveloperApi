@@ -1,8 +1,8 @@
 ﻿namespace Habitor.Api.Entities;
 
-public class HabitEntity
+public sealed class HabitEntity
 {
-	public string Id { get; set; }
+	public required string Id { get; set; }
 	public string Name { get; set; } = string.Empty;
 	public string? Description { get; set; }
 	public HabitType Type { get; set; }
@@ -15,4 +15,5 @@ public class HabitEntity
 	public DateTime CreatedAtUtc { get; set; }
 	public DateTime? UpdatedAtUtc { get; set; }
 	public DateTime? LastCompletedAtUtc { get; set; }
+	public List<HabitTagEntity> HabitTags { get; set; }
 }
