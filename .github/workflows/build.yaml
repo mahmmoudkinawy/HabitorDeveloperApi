@@ -29,11 +29,11 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build project
+      - name: Build all projects
         run: dotnet build --configuration Release --no-restore
 
       - name: Run tests
         run: dotnet test --configuration Release --no-restore --no-build
 
       - name: Publish project
-        run: dotnet publish --configuration Release --no-restore --no-build
+        run: dotnet publish src/Habitor.Api --configuration Release --no-restore --no-build
