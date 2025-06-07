@@ -27,6 +27,6 @@ public class GetHabitsControllerTests : IClassFixture<HabitorApiFactory>
 		var result = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 
 		result!.Title.ShouldBe("Not Found");
-		result!.Status.ShouldBe(StatusCodes.Status200OK);
+		result!.Status.ShouldBe(StatusCodes.Status404NotFound);
 	}
 }
