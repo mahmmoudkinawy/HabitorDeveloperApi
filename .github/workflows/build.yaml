@@ -13,10 +13,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: src/Habitor.Api
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,13 +23,13 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore HabitorDeveloper.sln
 
-      - name: Build all projects
-        run: dotnet build --configuration Release --no-restore
+      - name: Build solution
+        run: dotnet build HabitorDeveloper.sln --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test --configuration Release --no-restore --no-build
+        run: dotnet test HabitorDeveloper.sln --configuration Release --no-restore --no-build --logger "trx"
 
-      - name: Publish project
+      - name: Publish API project
         run: dotnet publish src/Habitor.Api --configuration Release --no-restore --no-build
